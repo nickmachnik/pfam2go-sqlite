@@ -2,7 +2,7 @@ import sqlite3
 from sqlite3 import Error
 
 
-def connect(db_file):
+def _connect(db_file):
     """Connect to SQLite database.
 
     Args:
@@ -21,7 +21,7 @@ def connect(db_file):
     return connection
 
 
-def create_table(connection, create_table_sql):
+def _create_table(connection, create_table_sql):
     """Create a table from the create_table_sql statement
 
     Args:
