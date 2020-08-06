@@ -19,3 +19,17 @@ def connect(db_file):
         print(e)
 
     return connection
+
+
+def create_table(connection, create_table_sql):
+    """Create a table from the create_table_sql statement
+
+    Args:
+        connection (sqlite3 connection): Connection to SQLite database
+        create_table_sql (str): A SQL 'CRATE TABLE' statement
+    """
+    try:
+        c = connection.cursor()
+        c.execute(create_table_sql)
+    except Error as e:
+        print(e)
