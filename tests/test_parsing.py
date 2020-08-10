@@ -4,7 +4,6 @@ import unittest
 import os
 from utils import parsing
 
-
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 
 
