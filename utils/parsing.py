@@ -36,3 +36,14 @@ class Pfam2GOEntry:
             self.pfam_id = fields[1]
             self.go_id = fields[-1]
             self.go_name = line.split("GO:")[1].strip(" ; ")
+
+    def __eq__(self, other):
+        """Overrides the default implementation"""
+        if isinstance(other, Pfam2GOEntry):
+            return all([
+                self.pfam_id == other.pfam_id,
+                self.pfam_accession == other.pfam_accession,
+                self.go_id == other.go_id,
+                self.go_name == other.go_name
+                ])
+        return NotImplemented
