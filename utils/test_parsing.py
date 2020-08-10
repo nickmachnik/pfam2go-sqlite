@@ -10,7 +10,7 @@ class TestParsing(unittest.TestCase):
         expected = parsing.Pfam2GOEntry()
         expected.pfam_accession = "PF00009"
         expected.pfam_id = "GTP_EFTU"
-        expected.go_accession = "GO:0003924"
+        expected.go_id = "GO:0003924"
         expected.go_name = "GTPase activity"
         parsed = parsing.Pfam2GOEntry()
         parsed.from_line(line)
