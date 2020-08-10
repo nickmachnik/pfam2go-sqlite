@@ -45,7 +45,7 @@ class TestParsing(unittest.TestCase):
         pfam_a_parser = parsing.parse_pfam_A_fasta(pfam_a_test_path)
         self.assertEqual(
             str(next(pfam_a_parser)),
-            "<A0A1I4YJU4, 9ENTR, 160-195, PF10417>"
+            "<A0A1S3GR90, DIPOR, 54-327, PF00001>"
             )
 
 
