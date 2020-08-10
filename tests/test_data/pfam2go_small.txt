@@ -1,0 +1,15 @@
+!version date: 2020/06/13 14:34:16
+!description: Mapping of GO terms to Pfam entries. This mapping is generated from data supplied by InterPro for the InterPro2GO mapping.
+!external resources: http://www.ebi.ac.uk/interpro, http://pfam.sanger.ac.uk/
+!citation: Mitchell et al. (2015) Nucl. Acids Res. 43 :D213-D221
+!contact:interhelp@ebi.ac.uk
+!
+Pfam:PF00001 7tm_1 > GO:G protein-coupled receptor activity ; GO:0004930
+Pfam:PF00001 7tm_1 > GO:G protein-coupled receptor signaling pathway ; GO:0007186
+Pfam:PF00001 7tm_1 > GO:integral component of membrane ; GO:0016021
+Pfam:PF00002 7tm_2 > GO:G protein-coupled receptor activity ; GO:0004930
+Pfam:PF00002 7tm_2 > GO:G protein-coupled receptor signaling pathway ; GO:0007186
+Pfam:PF00002 7tm_2 > GO:integral component of membrane ; GO:0016021
+Pfam:PF00003 7tm_3 > GO:G protein-coupled receptor activity ; GO:0004930
+Pfam:PF00003 7tm_3 > GO:G protein-coupled receptor signaling pathway ; GO:0007186
+Pfam:PF00003 7tm_3 > GO:integral component of membrane ; GO:0016021
