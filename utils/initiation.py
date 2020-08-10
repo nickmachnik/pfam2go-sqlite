@@ -1,4 +1,5 @@
 import sqlite3
+from . import parsing
 from sqlite3 import Error
 
 
@@ -35,7 +36,28 @@ def _create_table(connection, create_table_sql):
         print(e)
 
 
-def initiate_db(path):
+def _create_pfam(connection, pfam_values):
+    """
+    Create a new pfam entry.
+
+    Args:
+        connection (TYPE): Description
+        pfam (TYPE): Description
+
+    Returns:
+        TYPE: Description
+
+    """
+
+    sql = "INSERT or IGNORE INTO Pfam(accession, id) VALUES(?,?)"
+    cur = connection.cursor()
+    cur.execute(sql, pfam_values)
+    connection.commit()
+
+    return cur.lastrowid
+
+
+def initiate_db(db_path, pfam2go_path):
     tables = []
     tables.append("""CREATE TABLE IF NOT EXISTS Pfam (
                         accession text PRIMARY KEY NOT NULL,
@@ -68,12 +90,17 @@ def initiate_db(path):
                                 );""")
 
     # create db
-    connection = _connect(path)
+    connection = _connect(db_path)
 
-    # create tables
     if connection is not None:
         with connection:
+            # create tabkes
             for create_table_sql in tables:
                 _create_table(connection, create_table_sql)
+
+            # insert pfam2go mapping data
+            for entry in parsing.parse_pfam2go(pfam2go_path):
+                curr_values = (entry.pfam_accession, entry.pfam_id)
+                _create_pfam(connection, curr_values)
     else:
         print("Error! cannot create the database connection.")
