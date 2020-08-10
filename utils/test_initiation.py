@@ -7,18 +7,19 @@ import os
 
 class TestLevenshteinSamplingFunctions(unittest.TestCase):
     def test_init(self):
-        os.remove("test.db")
-        initiation.initiate_db("test.db")
-        connection = initiation._connect("test.db")
+        test_db_name = "test.db"
+        if os.path.isfile(test_db_name):
+            os.remove(test_db_name)
+        initiation.initiate_db(test_db_name)
+        connection = initiation._connect(test_db_name)
         with connection:
             c = connection.cursor()
             c.execute("SELECT name FROM sqlite_master WHERE type='table';")
-            print(c.fetchall())
-        # self.assertEqual(
-        #     sample._lev_jit(
-        #         np.array(['a', 'b', 'c']),
-        #         np.array(['a', 'a', 'a']))[-1, -1],
-        #     2)
+            db_descr = c.fetchall()
+        self.assertEqual(
+            db_descr,
+            [('Pfam',), ('GO',), ('PfamGORelation',),
+             ('UniProt',), ('PfamUniProtRelation',)])
 
 
 if __name__ == '__main__':
