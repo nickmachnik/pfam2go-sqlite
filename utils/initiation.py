@@ -84,7 +84,25 @@ def _create_go_pfam_relation(connection, relation_values):
     connection.commit()
 
 
-def initiate_db(db_path, pfam2go_path):
+def _create_uniprot_entry(connection, uniprot_values):
+    """
+    Create a new uniprot entry.
+
+    Args:
+        connection (sqlite3 connection): Connection to SQLite database
+        uniprot_values (tuple(str)): tuple of values to insert
+    """
+
+    sql = """INSERT or IGNORE INTO UniProt(
+                accession,
+                entry_name)
+                VALUES(?,?)"""
+    cur = connection.cursor()
+    cur.execute(sql, uniprot_values)
+    connection.commit()
+
+
+def initiate_db(db_path, pfam2go_path, pfam_a_fasta_path):
     tables = []
     tables.append("""CREATE TABLE IF NOT EXISTS Pfam (
                         accession text PRIMARY KEY NOT NULL,
@@ -95,26 +113,26 @@ def initiate_db(db_path, pfam2go_path):
                         name text NOT NULL UNIQUE);""")
 
     tables.append("""CREATE TABLE IF NOT EXISTS PfamGORelation(
-                                    Pfam_accession text NOT NULL,
-                                    GO_id text NOT NULL,
-                                    FOREIGN KEY (Pfam_accession) REFERENCES Pfam(accession),
-                                    FOREIGN KEY (GO_id) REFERENCES GO(id),
-                                    UNIQUE (Pfam_accession, GO_id)
-                                );""")
+        Pfam_accession text NOT NULL,
+        GO_id text NOT NULL,
+        FOREIGN KEY (Pfam_accession) REFERENCES Pfam(accession),
+        FOREIGN KEY (GO_id) REFERENCES GO(id),
+        UNIQUE (Pfam_accession, GO_id)
+    );""")
 
     tables.append("""CREATE TABLE IF NOT EXISTS UniProt (
-                            accession text PRIMARY KEY,
-                            entry_name text NOT NULL UNIQUE
-                        );""")
+        accession text PRIMARY KEY,
+        entry_name text NOT NULL UNIQUE
+    );""")
 
     tables.append("""CREATE TABLE IF NOT EXISTS PfamUniProtRelation(
-                                    Pfam_accession text NOT NULL,
-                                    UniProt_accession text NOT NULL,
-                                    position text NOT NULL,
-                                    FOREIGN KEY (Pfam_accession) REFERENCES Pfam(accession),
-                                    FOREIGN KEY (UniProt_accession) REFERENCES UniProt(accession),
-                                    UNIQUE (Pfam_accession, UniProt_accession)
-                                );""")
+        Pfam_accession text NOT NULL,
+        UniProt_accession text NOT NULL,
+        position text NOT NULL,
+        FOREIGN KEY (Pfam_accession) REFERENCES Pfam(accession),
+        FOREIGN KEY (UniProt_accession) REFERENCES UniProt(accession),
+        UNIQUE (Pfam_accession, UniProt_accession)
+    );""")
 
     # create db
     connection = _connect(db_path)
@@ -139,5 +157,17 @@ def initiate_db(db_path, pfam2go_path):
                     connection,
                     (entry.pfam_accession, entry.go_id))
 
+            # insert UniProt matches of pfam models
+            for entry in parsing.parse_pfam_A_fasta(pfam_a_fasta_path):
+                # insert only if the domain has a go annotation
+                c = connection.cursor()
+                c.execute(
+                    "SELECT * FROM Pfam WHERE accession = '{}';"
+                    .format(entry.pfam_accession))
+                matches = c.fetchall()
+                if matches is not None:
+                    _create_uniprot_entry(
+                        connection,
+                        (entry.uniprot_accession, entry.uniprot_entry_name))
     else:
         print("Error! cannot create the database connection.")
