@@ -102,6 +102,25 @@ def _create_uniprot_entry(connection, uniprot_values):
     connection.commit()
 
 
+def _create_pfam_uniprot_relation(connection, relation_values):
+    """
+    Create a new Pfam to UniProt relation.
+
+    Args:
+        connection (sqlite3 connection): Connection to SQLite database
+        go_values (tuple(str)): tuple of values to insert
+    """
+
+    sql = """INSERT or IGNORE INTO PfamUniProtRelation(
+                Pfam_accession,
+                UniProt_accession,
+                position)
+                VALUES(?,?,?)"""
+    cur = connection.cursor()
+    cur.execute(sql, relation_values)
+    connection.commit()
+
+
 def initiate_db(db_path, pfam2go_path, pfam_a_fasta_path):
     tables = []
     tables.append("""CREATE TABLE IF NOT EXISTS Pfam (
@@ -169,5 +188,12 @@ def initiate_db(db_path, pfam2go_path, pfam_a_fasta_path):
                     _create_uniprot_entry(
                         connection,
                         (entry.uniprot_accession, entry.uniprot_entry_name))
+                    _create_pfam_uniprot_relation(
+                        connection,
+                        (
+                            entry.pfam_accession,
+                            entry.uniprot_accession,
+                            entry.location
+                        ))
     else:
         print("Error! cannot create the database connection.")
