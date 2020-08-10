@@ -38,6 +38,18 @@ class TestInitiation(unittest.TestCase):
             pfam_table,
             [('PF00001', '7tm_1'), ('PF00002', '7tm_2'), ('PF00003', '7tm_3')])
 
+    def test_init_insert_go(self):
+        connection = initiation._connect(self.test_db_name)
+        with connection:
+            c = connection.cursor()
+            c.execute("SELECT * FROM GO")
+            go_table = c.fetchall()
+        self.assertEqual(
+            go_table,
+            [('GO:0004930', 'G protein-coupled receptor activity'),
+             ('GO:0007186', 'G protein-coupled receptor signaling pathway'),
+             ('GO:0016021', 'integral component of membrane')])
+
 
 if __name__ == '__main__':
     unittest.main()
