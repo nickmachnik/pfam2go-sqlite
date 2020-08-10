@@ -39,6 +39,15 @@ class TestParsing(unittest.TestCase):
         parsed.from_line(line)
         self.assertEqual(expected, parsed)
 
+    def test_parse_pfam_a(self):
+        pfam_a_test_path = os.path.join(
+            THIS_DIR, 'test_data/Pfam-A-test.fasta')
+        pfam_a_parser = parsing.parse_pfam_A_fasta(pfam_a_test_path)
+        self.assertEqual(
+            str(next(pfam_a_parser)),
+            "<A0A1I4YJU4, 9ENTR, 160-195, PF10417>"
+            )
+
 
 if __name__ == '__main__':
     unittest.main()
