@@ -67,6 +67,46 @@ class TestInitiation(unittest.TestCase):
              ('PF00003', 'GO:0004930'), ('PF00003', 'GO:0007186'),
              ('PF00003', 'GO:0016021')])
 
+    def test_init_insert_uniprot(self):
+        connection = initiation._connect(self.test_db_name)
+        with connection:
+            c = connection.cursor()
+            c.execute("SELECT * FROM UniProt")
+            uniprot_table = c.fetchall()
+        self.assertEqual(
+            uniprot_table,
+            [('A0A1S3GR90', 'DIPOR'), ('H9JMZ1', 'BOMMO'), ('W5NMM9', 'LEPOC'),
+             ('A0A498M701', 'LABRO'), ('C3Z4K9', 'BRAFL'),
+             ('A0A369RQL1', '9METZ'), ('H3BCE7', 'LATCH'), ('F7BBL0', 'ORNAN'),
+             ('A0A1Y3N5N1', 'PIRSE'), ('A0A493T6H5', 'ANAPP'),
+             ('A0A1L8GCA2', 'XENLA'), ('A0A3P8PJJ8', 'ASTCA'),
+             ('A0A3B1JRC8', 'ASTMX'), ('A0A158PBE8', 'ANGCA'),
+             ('A0A482VPN5', '9CUCU')])
+
+    def test_init_insert_pfam_uniprot_relations(self):
+        connection = initiation._connect(self.test_db_name)
+        with connection:
+            c = connection.cursor()
+            c.execute("SELECT * FROM PfamUniProtRelation")
+            rel_table = c.fetchall()
+        self.assertEqual(
+            rel_table,
+            [('PF00001', 'A0A1S3GR90', '54-327'),
+             ('PF00001', 'H9JMZ1', '45-143'),
+             ('PF00001', 'W5NMM9', '44-295'),
+             ('PF00001', 'A0A498M701', '58-314'),
+             ('PF00001', 'C3Z4K9', '144-229'),
+             ('PF00001', 'A0A369RQL1', '50-274'),
+             ('PF00001', 'H3BCE7', '40-292'),
+             ('PF00003', 'F7BBL0', '596-841'),
+             ('PF00003', 'A0A1Y3N5N1', '320-559'),
+             ('PF00003', 'A0A493T6H5', '488-719'),
+             ('PF00003', 'A0A1L8GCA2', '499-734'),
+             ('PF00003', 'A0A3P8PJJ8', '520-719'),
+             ('PF00003', 'A0A3B1JRC8', '60-287'),
+             ('PF00003', 'A0A158PBE8', '363-598'),
+             ('PF00003', 'A0A482VPN5', '481-733')])
+
 
 if __name__ == '__main__':
     unittest.main()
