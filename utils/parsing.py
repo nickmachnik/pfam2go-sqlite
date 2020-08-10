@@ -9,7 +9,9 @@ def parse_pfam2go(path):
     with open(path, 'r') as fin:
         for line in fin:
             if not line.startswith("!"):
-                yield Pfam2GOEntry().from_line(line)
+                curr_entry = Pfam2GOEntry()
+                curr_entry.from_line(line)
+                yield curr_entry
 
 
 class Pfam2GOEntry:
