@@ -107,6 +107,23 @@ class TestInitiation(unittest.TestCase):
              ('PF00003', 'A0A158PBE8', '363-598'),
              ('PF00003', 'A0A482VPN5', '481-733')])
 
+    def test_uniprot_match_to_go_query(self):
+        connection = initiation._connect(self.test_db_name)
+        with connection:
+            c = connection.cursor()
+            c.execute("""
+                SELECT GO_id
+                FROM PfamGORelation pg
+                INNER JOIN PfamUniProtRelation pu
+                ON pg.Pfam_accession = pu.Pfam_accession
+                WHERE pu.UniProt_accession = 'A0A1Y3N5N1'
+                AND pu.position = '320-559';
+            """)
+            res = c.fetchall()
+        self.assertEqual(
+            res,
+            [('GO:0004930', ), ('GO:0007186', ), ('GO:0016021', )])
+
 
 if __name__ == '__main__':
     unittest.main()
