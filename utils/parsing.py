@@ -78,8 +78,8 @@ def parse_pfam_A_fasta(path):
 class UniProtMatch:
     """docstring for UniProtMatch"""
     def __init__(self):
-        self.uni_prot_accession = None
-        self.uni_prot_entry_name = None
+        self.uniprot_accession = None
+        self.uniprot_entry_name = None
         self.location = None
         self.pfam_accession = None
 
@@ -94,8 +94,8 @@ class UniProtMatch:
             raise ValueError("Description lines have to start with '>'")
         else:
             fields = line.split()
-            self.uni_prot_accession = fields[1].split('.')[0]
-            self.uni_prot_entry_name, self.location = (
+            self.uniprot_accession = fields[1].split('.')[0]
+            self.uniprot_entry_name, self.location = (
                 fields[0].split('_')[1].split('/'))
             self.pfam_accession = fields[-1].split('.')[0]
 
@@ -103,8 +103,8 @@ class UniProtMatch:
         """Overrides the default implementation"""
         if isinstance(other, UniProtMatch):
             return all([
-                self.uni_prot_accession == other.uni_prot_accession,
-                self.uni_prot_entry_name == other.uni_prot_entry_name,
+                self.uniprot_accession == other.uniprot_accession,
+                self.uniprot_entry_name == other.uniprot_entry_name,
                 self.location == other.location,
                 self.pfam_accession == other.pfam_accession
                 ])
@@ -112,10 +112,10 @@ class UniProtMatch:
 
     def __repr__(self):
         return "<{}, {}, {}, {}>".format(
-            self.uni_prot_accession, self.uni_prot_entry_name,
+            self.uniprot_accession, self.uniprot_entry_name,
             self.location, self.pfam_accession)
 
     def __str__(self):
         return "<{}, {}, {}, {}>".format(
-            self.uni_prot_accession, self.uni_prot_entry_name,
+            self.uniprot_accession, self.uniprot_entry_name,
             self.location, self.pfam_accession)

@@ -32,8 +32,8 @@ class TestParsing(unittest.TestCase):
         line = ">F6R8L2_ORNAN/163-198 F6R8L2.1 PF10417.10;1-cysPrx_C;"
         expected = parsing.UniProtMatch()
         expected.pfam_accession = "PF10417"
-        expected.uni_prot_entry_name = "ORNAN"
-        expected.uni_prot_accession = "F6R8L2"
+        expected.uniprot_entry_name = "ORNAN"
+        expected.uniprot_accession = "F6R8L2"
         expected.location = "163-198"
         parsed = parsing.UniProtMatch()
         parsed.from_line(line)
