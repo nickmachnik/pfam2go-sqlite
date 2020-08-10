@@ -66,6 +66,24 @@ def _create_go(connection, go_values):
     connection.commit()
 
 
+def _create_go_pfam_relation(connection, relation_values):
+    """
+    Create a new PfamGO relation.
+
+    Args:
+        connection (sqlite3 connection): Connection to SQLite database
+        go_values (tuple(str)): tuple of values to insert
+    """
+
+    sql = """INSERT or IGNORE INTO PfamGORelation(
+                Pfam_accession,
+                GO_id)
+                VALUES(?,?)"""
+    cur = connection.cursor()
+    cur.execute(sql, relation_values)
+    connection.commit()
+
+
 def initiate_db(db_path, pfam2go_path):
     tables = []
     tables.append("""CREATE TABLE IF NOT EXISTS Pfam (
@@ -110,8 +128,16 @@ def initiate_db(db_path, pfam2go_path):
             # insert pfam2go mapping data
             for entry in parsing.parse_pfam2go(pfam2go_path):
                 curr_pfam_values = (entry.pfam_accession, entry.pfam_id)
-                _create_pfam(connection, curr_pfam_values)
+                _create_pfam(
+                    connection,
+                    curr_pfam_values)
                 curr_go_values = (entry.go_id, entry.go_name)
-                _create_go(connection, curr_go_values)
+                _create_go(
+                    connection,
+                    curr_go_values)
+                _create_go_pfam_relation(
+                    connection,
+                    (entry.pfam_accession, entry.go_id))
+
     else:
         print("Error! cannot create the database connection.")
