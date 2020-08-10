@@ -47,3 +47,11 @@ class Pfam2GOEntry:
                 self.go_name == other.go_name
                 ])
         return NotImplemented
+
+    def __repr__(self):
+        return "<{}, {}, {}, {}>".format(
+            self.pfam_id, self.pfam_accession, self.go_id, self.go_name)
+
+    def __str__(self):
+        return "<{}, {}, {}, {}>".format(
+            self.pfam_id, self.pfam_accession, self.go_id, self.go_name)
