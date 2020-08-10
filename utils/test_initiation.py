@@ -5,7 +5,7 @@ import initiation
 import os
 
 
-class TestLevenshteinSamplingFunctions(unittest.TestCase):
+class TestInitiation(unittest.TestCase):
     def test_init(self):
         test_db_name = "test.db"
         if os.path.isfile(test_db_name):
