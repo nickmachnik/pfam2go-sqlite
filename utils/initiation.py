@@ -38,15 +38,11 @@ def _create_table(connection, create_table_sql):
 
 def _create_pfam(connection, pfam_values):
     """
-    Create a new pfam entry.
+    Create a new Pfam entry.
 
     Args:
-        connection (TYPE): Description
-        pfam (TYPE): Description
-
-    Returns:
-        TYPE: Description
-
+        connection (sqlite3 connection): Connection to SQLite database
+        pfam_values (tuple(str)): tuple of values to insert
     """
 
     sql = "INSERT or IGNORE INTO Pfam(accession, id) VALUES(?,?)"
@@ -54,7 +50,20 @@ def _create_pfam(connection, pfam_values):
     cur.execute(sql, pfam_values)
     connection.commit()
 
-    return cur.lastrowid
+
+def _create_go(connection, go_values):
+    """
+    Create a new GO entry.
+
+    Args:
+        connection (sqlite3 connection): Connection to SQLite database
+        go_values (tuple(str)): tuple of values to insert
+    """
+
+    sql = "INSERT or IGNORE INTO GO(id, name) VALUES(?,?)"
+    cur = connection.cursor()
+    cur.execute(sql, go_values)
+    connection.commit()
 
 
 def initiate_db(db_path, pfam2go_path):
@@ -100,7 +109,9 @@ def initiate_db(db_path, pfam2go_path):
 
             # insert pfam2go mapping data
             for entry in parsing.parse_pfam2go(pfam2go_path):
-                curr_values = (entry.pfam_accession, entry.pfam_id)
-                _create_pfam(connection, curr_values)
+                curr_pfam_values = (entry.pfam_accession, entry.pfam_id)
+                _create_pfam(connection, curr_pfam_values)
+                curr_go_values = (entry.go_id, entry.go_name)
+                _create_go(connection, curr_go_values)
     else:
         print("Error! cannot create the database connection.")
