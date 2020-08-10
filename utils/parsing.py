@@ -57,3 +57,65 @@ class Pfam2GOEntry:
     def __str__(self):
         return "<{}, {}, {}, {}>".format(
             self.pfam_id, self.pfam_accession, self.go_id, self.go_name)
+
+
+def parse_pfam_A_fasta(path):
+    """Generator over the matching info in a Pfam-A.fasta file
+    as found at
+    ftp://ftp.ebi.ac.uk/pub/databases/Pfam/releases/Pfam33.1/
+
+    Args:
+        path (str): Path to the Pfam-A.fasta file.
+    """
+    with open(path, 'r') as fin:
+        for line in fin:
+            if line.startswith(">"):
+                curr_entry = UniProtMatch()
+                curr_entry.from_line(line)
+                yield curr_entry
+
+
+class UniProtMatch:
+    """docstring for UniProtMatch"""
+    def __init__(self):
+        self.uni_prot_accession = None
+        self.uni_prot_entry_name = None
+        self.location = None
+        self.pfam_accession = None
+
+    def from_line(self, line):
+        """Set object attributes by parsing a description line
+        from a Pfam-A.fasta file
+
+        Args:
+            line (str): A description line from a Pfam-A.fasta file.
+        """
+        if not line.startswith(">"):
+            raise ValueError("Description lines have to start with '>'")
+        else:
+            fields = line.split()
+            self.uni_prot_accession = fields[1].split('.')[0]
+            self.uni_prot_entry_name, self.location = (
+                fields[0].split('_')[1].split('/'))
+            self.pfam_accession = fields[-1].split('.')[0]
+
+    def __eq__(self, other):
+        """Overrides the default implementation"""
+        if isinstance(other, UniProtMatch):
+            return all([
+                self.uni_prot_accession == other.uni_prot_accession,
+                self.uni_prot_entry_name == other.uni_prot_entry_name,
+                self.location == other.location,
+                self.pfam_accession == other.pfam_accession
+                ])
+        return NotImplemented
+
+    def __repr__(self):
+        return "<{}, {}, {}, {}>".format(
+            self.uni_prot_accession, self.uni_prot_entry_name,
+            self.location, self.pfam_accession)
+
+    def __str__(self):
+        return "<{}, {}, {}, {}>".format(
+            self.uni_prot_accession, self.uni_prot_entry_name,
+            self.location, self.pfam_accession)
