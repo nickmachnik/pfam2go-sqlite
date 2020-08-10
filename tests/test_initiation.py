@@ -12,10 +12,13 @@ class TestInitiation(unittest.TestCase):
         super(TestInitiation, self).__init__(*args, **kwargs)
         pfam2go_test_path = os.path.join(
             THIS_DIR, 'test_data/pfam2go_small.txt')
+        pfam_a_test_path = os.path.join(
+            THIS_DIR, 'test_data/Pfam-A-test.fasta')
         self.test_db_name = "test.db"
         if os.path.isfile(self.test_db_name):
             os.remove(self.test_db_name)
-        initiation.initiate_db(self.test_db_name, pfam2go_test_path)
+        initiation.initiate_db(
+            self.test_db_name, pfam2go_test_path, pfam_a_test_path)
 
     def test_init_tables(self):
         connection = initiation._connect(self.test_db_name)
