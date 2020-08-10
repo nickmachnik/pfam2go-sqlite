@@ -45,27 +45,27 @@ def initiate_db(path):
                         id text PRIMARY KEY NOT NULL,
                         name text NOT NULL UNIQUE);""")
 
-    # tables.append("""CREATE TABLE IF NOT EXISTS PfamGORelation(
-    #                                 Pfam_accession text NOT NULL,
-    #                                 GO_id text NOT NULL,
-    #                                 FOREIGN KEY (Pfam_accession) REFERENCES Pfam(accession),
-    #                                 FOREIGN KEY (GO_id) REFERENCES GO(id),
-    #                                 UNIQUE (Pfam_accession, GO_id)
-    #                             );""")
+    tables.append("""CREATE TABLE IF NOT EXISTS PfamGORelation(
+                                    Pfam_accession text NOT NULL,
+                                    GO_id text NOT NULL,
+                                    FOREIGN KEY (Pfam_accession) REFERENCES Pfam(accession),
+                                    FOREIGN KEY (GO_id) REFERENCES GO(id),
+                                    UNIQUE (Pfam_accession, GO_id)
+                                );""")
 
-    # tables.append("""CREATE TABLE IF NOT EXISTS UniProt (
-    #                         accession text PRIMARY KEY,
-    #                         entry_name text NOT NULL UNIQUE,
-    #                     );""")
+    tables.append("""CREATE TABLE IF NOT EXISTS UniProt (
+                            accession text PRIMARY KEY,
+                            entry_name text NOT NULL UNIQUE
+                        );""")
 
-    # tables.append("""CREATE TABLE IF NOT EXISTS PfamUniProtRelation(
-    #                                 Pfam_accession text NOT NULL,
-    #                                 UniProt_accession text NOT NULL,
-    #                                 position text NOT NULL,
-    #                                 FOREIGN KEY (Pfam_accession) REFERENCES Pfam(accession),
-    #                                 FOREIGN KEY (UniProt_accession) REFERENCES UniProt(accession),
-    #                                 UNIQUE (Pfam_accession, GO_id)
-    #                             );""")
+    tables.append("""CREATE TABLE IF NOT EXISTS PfamUniProtRelation(
+                                    Pfam_accession text NOT NULL,
+                                    UniProt_accession text NOT NULL,
+                                    position text NOT NULL,
+                                    FOREIGN KEY (Pfam_accession) REFERENCES Pfam(accession),
+                                    FOREIGN KEY (UniProt_accession) REFERENCES UniProt(accession),
+                                    UNIQUE (Pfam_accession, UniProt_accession)
+                                );""")
 
     # create db
     connection = _connect(path)
