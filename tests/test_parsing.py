@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-import parsing
+from utils import parsing
 
 
 class TestParsing(unittest.TestCase):
@@ -26,6 +26,7 @@ class TestParsing(unittest.TestCase):
         parsed = parsing.Pfam2GOEntry()
         parsed.from_line(line)
         self.assertEqual(expected, parsed)
+
 
 if __name__ == '__main__':
     unittest.main()

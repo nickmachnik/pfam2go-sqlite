@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-import initiation
+from utils import initiation
 import os
 
 
