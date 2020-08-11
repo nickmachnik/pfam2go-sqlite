@@ -36,7 +36,7 @@ def _create_table(connection, create_table_sql):
         print(e)
 
 
-def _create_pfam(connection, pfam_values):
+def _create_pfam(connection, cursor, pfam_values):
     """
     Create a new Pfam entry.
 
@@ -46,12 +46,10 @@ def _create_pfam(connection, pfam_values):
     """
 
     sql = "INSERT or IGNORE INTO Pfam(accession, id) VALUES(?,?)"
-    cur = connection.cursor()
-    cur.execute(sql, pfam_values)
-    connection.commit()
+    cursor.execute(sql, pfam_values)
 
 
-def _create_go(connection, go_values):
+def _create_go(connection, cursor, go_values):
     """
     Create a new GO entry.
 
@@ -61,12 +59,10 @@ def _create_go(connection, go_values):
     """
 
     sql = "INSERT or IGNORE INTO GO(id, name) VALUES(?,?)"
-    cur = connection.cursor()
-    cur.execute(sql, go_values)
-    connection.commit()
+    cursor.execute(sql, go_values)
 
 
-def _create_go_pfam_relation(connection, relation_values):
+def _create_go_pfam_relation(connection, cursor, relation_values):
     """
     Create a new PfamGO relation.
 
@@ -79,12 +75,10 @@ def _create_go_pfam_relation(connection, relation_values):
                 Pfam_accession,
                 GO_id)
                 VALUES(?,?)"""
-    cur = connection.cursor()
-    cur.execute(sql, relation_values)
-    connection.commit()
+    cursor.execute(sql, relation_values)
 
 
-def _create_uniprot_entry(connection, uniprot_values):
+def _create_uniprot_entry(connection, cursor, uniprot_values):
     """
     Create a new uniprot entry.
 
@@ -97,12 +91,10 @@ def _create_uniprot_entry(connection, uniprot_values):
                 accession,
                 entry_name)
                 VALUES(?,?)"""
-    cur = connection.cursor()
-    cur.execute(sql, uniprot_values)
-    connection.commit()
+    cursor.execute(sql, uniprot_values)
 
 
-def _create_pfam_uniprot_relation(connection, relation_values):
+def _create_pfam_uniprot_relation(connection, cursor, relation_values):
     """
     Create a new Pfam to UniProt relation.
 
@@ -116,9 +108,7 @@ def _create_pfam_uniprot_relation(connection, relation_values):
                 UniProt_accession,
                 position)
                 VALUES(?,?,?)"""
-    cur = connection.cursor()
-    cur.execute(sql, relation_values)
-    connection.commit()
+    cursor.execute(sql, relation_values)
 
 
 def initiate_db(db_path, pfam2go_path, pfam_a_fasta_path):
@@ -162,38 +152,48 @@ def initiate_db(db_path, pfam2go_path, pfam_a_fasta_path):
             for create_table_sql in tables:
                 _create_table(connection, create_table_sql)
 
+            cursor = connection.cursor()
+
+            cursor.execute('BEGIN TRANSACTION')
             # insert pfam2go mapping data
             for entry in parsing.parse_pfam2go(pfam2go_path):
                 curr_pfam_values = (entry.pfam_accession, entry.pfam_id)
                 _create_pfam(
                     connection,
+                    cursor,
                     curr_pfam_values)
                 curr_go_values = (entry.go_id, entry.go_name)
                 _create_go(
                     connection,
+                    cursor,
                     curr_go_values)
                 _create_go_pfam_relation(
                     connection,
+                    cursor,
                     (entry.pfam_accession, entry.go_id))
+            cursor.execute('COMMIT')
 
+            cursor.execute('BEGIN TRANSACTION')
             # insert UniProt matches of pfam models
             for entry in parsing.parse_pfam_A_fasta(pfam_a_fasta_path):
                 # insert only if the domain has a go annotation
-                c = connection.cursor()
-                c.execute(
+                cursor.execute(
                     "SELECT * FROM Pfam WHERE accession = '{}';"
                     .format(entry.pfam_accession))
-                matches = c.fetchall()
+                matches = cursor.fetchall()
                 if matches is not None:
                     _create_uniprot_entry(
                         connection,
+                        cursor,
                         (entry.uniprot_accession, entry.uniprot_entry_name))
                     _create_pfam_uniprot_relation(
                         connection,
+                        cursor,
                         (
                             entry.pfam_accession,
                             entry.uniprot_accession,
                             entry.location
                         ))
+            cursor.execute('COMMIT')
     else:
         print("Error! cannot create the database connection.")
