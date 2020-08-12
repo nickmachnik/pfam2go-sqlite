@@ -148,7 +148,7 @@ def initiate_db(db_path, pfam2go_path, pfam_a_fasta_path):
     """)
     indices.append("""
         CREATE UNIQUE INDEX idx_pfam_uniprot_rel
-        ON PfamUniProtRelation(Pfam_accession, UniProt_accession);
+        ON PfamUniProtRelation(Pfam_accession, UniProt_accession, position);
     """)
 
     # create db
