@@ -22,20 +22,6 @@ def _connect(db_file):
     return connection
 
 
-def _create_table(connection, create_table_sql):
-    """Create a table from the create_table_sql statement
-
-    Args:
-        connection (sqlite3 connection): Connection to SQLite database
-        create_table_sql (str): A SQL 'CRATE TABLE' statement
-    """
-    try:
-        c = connection.cursor()
-        c.execute(create_table_sql)
-    except Error as e:
-        print(e)
-
-
 def _create_pfam(connection, cursor, pfam_values):
     """
     Create a new Pfam entry.
@@ -143,16 +129,42 @@ def initiate_db(db_path, pfam2go_path, pfam_a_fasta_path):
         UNIQUE (Pfam_accession, UniProt_accession)
     );""")
 
+    indices = []
+    indices.append("""
+        CREATE UNIQUE INDEX idx_pfam_accession
+        ON Pfam(accession);
+        """)
+    indices.append("""
+        CREATE UNIQUE INDEX idx_go_id
+        ON GO(id);
+    """)
+    indices.append("""
+        CREATE UNIQUE INDEX idx_pfam_go_rel
+        ON PfamGORelation(Pfam_accession, GO_id);
+    """)
+    indices.append("""
+        CREATE UNIQUE INDEX idx_uniprot_accession
+        ON UniProt(accession);
+    """)
+    indices.append("""
+        CREATE UNIQUE INDEX idx_pfam_uniprot_rel
+        ON PfamUniProtRelation(Pfam_accession, UniProt_accession);
+    """)
+
     # create db
     connection = _connect(db_path)
 
     if connection is not None:
         with connection:
+            cursor = connection.cursor()
+
             # create tabkes
             for create_table_sql in tables:
-                _create_table(connection, create_table_sql)
+                cursor.execute(create_table_sql)
 
-            cursor = connection.cursor()
+            # create tabkes
+            for create_index_sql in indices:
+                cursor.execute(create_index_sql)
 
             cursor.execute('BEGIN TRANSACTION')
             # insert pfam2go mapping data
