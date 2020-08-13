@@ -17,11 +17,11 @@ class TestInitiation(unittest.TestCase):
         self.test_db_name = "test.db"
         if os.path.isfile(self.test_db_name):
             os.remove(self.test_db_name)
-        initiation.initiate_db(
+        sqlite_init.initiate_db(
             self.test_db_name, pfam2go_test_path, pfam_a_test_path)
 
     def test_init_tables(self):
-        connection = initiation._connect(self.test_db_name)
+        connection = sqlite_init._connect(self.test_db_name)
         with connection:
             c = connection.cursor()
             c.execute("SELECT name FROM sqlite_master WHERE type='table';")
@@ -32,7 +32,7 @@ class TestInitiation(unittest.TestCase):
              ('UniProt',), ('PfamUniProtRelation',)])
 
     def test_init_insert_pfam(self):
-        connection = initiation._connect(self.test_db_name)
+        connection = sqlite_init._connect(self.test_db_name)
         with connection:
             c = connection.cursor()
             c.execute("SELECT * FROM Pfam")
@@ -42,7 +42,7 @@ class TestInitiation(unittest.TestCase):
             [('PF00001', '7tm_1'), ('PF00002', '7tm_2'), ('PF00003', '7tm_3')])
 
     def test_init_insert_go(self):
-        connection = initiation._connect(self.test_db_name)
+        connection = sqlite_init._connect(self.test_db_name)
         with connection:
             c = connection.cursor()
             c.execute("SELECT * FROM GO")
@@ -54,7 +54,7 @@ class TestInitiation(unittest.TestCase):
              ('GO:0016021', 'integral component of membrane')])
 
     def test_init_insert_pfam_go_relations(self):
-        connection = initiation._connect(self.test_db_name)
+        connection = sqlite_init._connect(self.test_db_name)
         with connection:
             c = connection.cursor()
             c.execute("SELECT * FROM PfamGORelation")
@@ -68,7 +68,7 @@ class TestInitiation(unittest.TestCase):
              ('PF00003', 'GO:0016021')])
 
     def test_init_insert_uniprot(self):
-        connection = initiation._connect(self.test_db_name)
+        connection = sqlite_init._connect(self.test_db_name)
         with connection:
             c = connection.cursor()
             c.execute("SELECT * FROM UniProt")
@@ -84,7 +84,7 @@ class TestInitiation(unittest.TestCase):
              ('A0A482VPN5', '9CUCU')])
 
     def test_init_insert_pfam_uniprot_relations(self):
-        connection = initiation._connect(self.test_db_name)
+        connection = sqlite_init._connect(self.test_db_name)
         with connection:
             c = connection.cursor()
             c.execute("SELECT * FROM PfamUniProtRelation")
@@ -108,7 +108,7 @@ class TestInitiation(unittest.TestCase):
              ('PF00003', 'A0A482VPN5', '481-733')])
 
     def test_uniprot_match_to_go_query(self):
-        connection = initiation._connect(self.test_db_name)
+        connection = sqlite_init._connect(self.test_db_name)
         with connection:
             c = connection.cursor()
             c.execute("""
