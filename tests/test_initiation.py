@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 import unittest
-from utils import initiation
+from utils import sqlite_init
 import os
 
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
